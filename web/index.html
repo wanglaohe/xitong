@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4D航迹预测与可视化系统</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>融合在线更新 GRU 的 4D 航迹预测与可视化系统</h1>
+    <p>面向空管冲突检测、异常行为监测与协同决策的双场景短期预测平台</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1) 研究目标与业务价值</h2>
+      <ul>
+        <li>单步预测：满足短时效、高精度要求，服务冲突探测和实时告警。</li>
+        <li>多步预测：满足长时序、强关联要求，服务流量态势研判与协同决策。</li>
+        <li>输出维度：经度、纬度、高度、过点时间（4D）。</li>
+        <li>目标效果：降低飞行不确定性，减轻管制员工作负荷。</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>2) 航迹数据预处理</h2>
+      <div class="pipeline">
+        <div>原始数据清洗</div>
+        <div>异常点检测</div>
+        <div>时空插值</div>
+        <div>特征扩展</div>
+        <div>序列截断与对齐</div>
+      </div>
+      <p class="note">特征扩展示例：地速、航向角、垂直速度、邻近交通密度、天气编码、扇区负荷等。</p>
+    </section>
+
+    <section class="card grid-two">
+      <div>
+        <h2>3) 预测模式配置</h2>
+        <label for="mode">预测方式</label>
+        <select id="mode">
+          <option value="single">单步预测（t+1）</option>
+          <option value="multi">多步预测（t+1...t+n）</option>
+        </select>
+
+        <label for="horizon">预测步长（多步时生效）</label>
+        <input id="horizon" type="range" min="2" max="10" step="1" value="6" />
+        <div id="horizonValue">6</div>
+
+        <button id="predictBtn">运行预测</button>
+        <pre id="predictionOutput"></pre>
+      </div>
+
+      <div>
+        <h2>4) 在线更新 GRU 闭环</h2>
+        <ol>
+          <li>接收雷达/ADS-B 实时观测流</li>
+          <li>GRU 执行序列推理输出 4D 轨迹点</li>
+          <li>基于状态估计进行误差反馈校正</li>
+          <li>按窗口触发在线微调更新参数</li>
+          <li>刷新预测与可视化，形成闭环</li>
+        </ol>
+        <p class="note">可融合质点运动模型、状态估计模型、机器学习模型提升鲁棒性和泛化能力。</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5) 可视化监控与历史回溯</h2>
+      <div id="map"></div>
+      <div class="charts">
+        <div id="altitudeChart"></div>
+        <div id="speedChart"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>系统访问网址</h2>
+      <p>本地运行后访问：<strong>http://localhost:8000</strong></p>
+      <p class="note">可按需部署到内网服务器，并绑定域名供空管与航司多方访问。</p>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
